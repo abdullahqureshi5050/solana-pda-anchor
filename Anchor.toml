@@ -1,0 +1,14 @@
+[features]
+seeds = false
+[programs.devnet]
+pdas = "4zf7ZLaP15VP4rTkFWaHxQwjdn8CnKEZJPYxN7SQD6jQ"
+
+[registry]
+url = "https://anchor.projectserum.com"
+
+[provider]
+cluster = "devnet"
+wallet = "/home/abdullahqureshi/.config/solana/id.json"
+
+[scripts]
+test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"

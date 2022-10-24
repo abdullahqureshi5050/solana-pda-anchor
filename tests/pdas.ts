@@ -38,9 +38,10 @@ describe("pdas", () => {
   async function createLedgerAccount(
     //color: string, 
     pda: anchor.web3.PublicKey, 
-    wallet: anchor.web3.Keypair
+    wallet: anchor.web3.Keypair,
+    currentSale: Number,
   ) {
-    await program.methods.createLedger()
+    await program.methods.createLedger(currentSale as number)
       .accounts({
         ledgerAccount: pda,
         wallet: wallet.publicKey,
@@ -64,28 +65,29 @@ describe("pdas", () => {
   }
 
 
-//   it("PDA initializting...", async () => {
+  // it("PDA initializting...", async () => {
 
-//   try {
-//     const wallet = await generateKeypair(); //.then(async (wallet)=>{
-//     const pda = await derivePda(wallet.publicKey);//.then(async (pda)=>{
-//     await createLedgerAccount( pda , wallet); 
-//     console.log(`successfully created PDAs`);
+  // try {
+  //   const wallet = await generateKeypair(); //.then(async (wallet)=>{
+  //   const pda = await derivePda(wallet.publicKey);//.then(async (pda)=>{
+  //   await createLedgerAccount( pda , wallet, 1); 
+  //   console.log(`successfully created PDAs`);
 
-//     const data = await program.account.ledger.fetch(pda);
+  //   const data = await program.account.ledger.fetch(pda);
 
-//     //console.log(`Count: ${data.count} , Balance: ${data}`);
-//     console.log(`count = ${data.count}, free: ${data.freeStageCount}, limited: ${data.limitedStageCount}, public: ${data.publicStageCount}`);
-        
-//   //} 
-//   //    );
-//     //}
-//   //);  
-
-//   } catch (error) {
-//     console.log(`somthing went wrong ${error}`);
-//   }
-// })
+  //   //console.log(`Count: ${data.count} , Balance: ${data}`);
+  //   console.log(`
+  //     bounded time: ${data.timebound}, 
+  //     current Sale: ${data.currentSale}, 
+  //     count = ${data.count}, free: ${data.freeStageCount}, 
+  //     limited: ${data.limitedStageCount}, 
+  //     timebound: ${data.timeboundStageCount},
+  //     public: ${data.publicStageCount}`
+  //   );
+  // } catch (error) {
+  //   console.log(`somthing went wrong ${error}`);
+  // }
+  // })
 
 it("PDA Updating...", async () => {
 
@@ -98,8 +100,16 @@ it("PDA Updating...", async () => {
     const data = await program.account.ledger.fetch(pda);
 
     //console.log(`Count: ${data.count} , Balance: ${data}`);
-    console.log(`count = ${data.count}, free: ${data.freeStageCount}, limited: ${data.limitedStageCount}, public: ${data.publicStageCount}`);
-        
+    // console.log(`current Sale: ${data.currentSale} bounded time: ${data.timebound} count = ${data.count}, free: ${data.freeStageCount}, limited: ${data.limitedStageCount}, public: ${data.publicStageCount}`);
+      
+    console.log(`
+      bounded time: ${data.timebound}, 
+      current Sale: ${data.currentSale}, 
+      count = ${data.count}, 
+      free: ${data.freeStageCount}, limited: ${data.limitedStageCount}, timebound: ${data.timeboundStageCount},
+      public: ${data.publicStageCount}`
+    );
+
   //} 
   //    );
     //}
@@ -109,4 +119,5 @@ it("PDA Updating...", async () => {
     console.log(`somthing went wrong ${error}`);
   }
 })
+
 });

@@ -1,6 +1,6 @@
 use anchor_lang::prelude::*;
 
-declare_id!("4zf7ZLaP15VP4rTkFWaHxQwjdn8CnKEZJPYxN7SQD6jQ");
+declare_id!("5FDj86XKQNuuxi4StFD8KUFep71eajy4kMD9fTvKZt8a");
 
 #[program]
 pub mod pdas {
@@ -12,22 +12,51 @@ pub mod pdas {
     ) -> Result<()> {
         let ledger_account = &mut ctx.accounts.ledger_account;
         //ledger_account.counter = counter;
-        ledger_account.balance = 0;
-        ledger_account.count += 2;
-        msg!("balance = {}", ledger_account.balance);
+        
+        ledger_account.count = 0;
+        ledger_account.timebound_stage_count = 0;
+        ledger_account.free_stage_count = 0;
+        ledger_account.limited_stage_count = 0;
+        ledger_account.public_stage_count = 0;
+
+        msg!("count = {} limited: {} public: {} ", ledger_account.count, ledger_account.limited_stage_count, ledger_account.public_stage_count);
         Ok(())
     }
 
-    // pub fn modify_ledger(
-    //     ctx: Context<ModifyLedger>,
-    //     new_balance: u32,
-    // ) -> Result<()> {
+    // pub fn mint_nft(
+    //     //ctx: Context<>,
+    // ) -> Result<> {
 
-    //     let ledger_account = &mut ctx.accounts.ledger_account;
-    //     ledger_account.balance = new_balance;
-        
-    //     Ok(())
+    //      Ok(());
     // }
+    
+    pub fn modify_ledger(
+        ctx: Context<ModifyLedger>,
+    ) -> Result<()> {
+
+        let ledger_account = &mut ctx.accounts.ledger_account;
+        
+        if ledger_account.free_stage_count < 1 {
+            ledger_account.free_stage_count +=1;
+            ledger_account.count += 1;
+         }
+ 
+         else if ledger_account.limited_stage_count < 2 {
+             ledger_account.limited_stage_count += 1;
+             ledger_account.count += 1;
+         }
+ 
+         else if ledger_account.public_stage_count < 6 {
+             ledger_account.public_stage_count += 1;
+             ledger_account.count += 1;
+         }
+         else {
+         msg!("Maximim NFTs minted");
+         }
+         msg!("count = {} limited: {} public: {} ", ledger_account.count, ledger_account.limited_stage_count, ledger_account.public_stage_count);
+
+        Ok(())
+    }
 }
 
 #[derive(Accounts)]
@@ -50,16 +79,24 @@ pub struct CreateLedger<'info> {
     pub system_program: Program<'info, System>,
 }
 
-// #[derive(Accounts)]
-// pub struct ModifyLedger<'info> {
-//     #[account(mut)]
-//     pub ledger_account: Account<'info, Ledger>,
-//     #[account(mut)]
-//     pub wallet: Signer<'info>,
-// }
+#[derive(Accounts)]
+pub struct ModifyLedger<'info> {
+    #[account(mut)]
+    pub ledger_account: Account<'info, Ledger>,
+    #[account(mut)]
+    pub wallet: Signer<'info>,
+}
 
 #[account]
 pub struct Ledger {
-    pub count: u32,
-    pub balance: u32,
+    //max minted
+    pub count: u32, 
+    //max 100 
+    pub free_stage_count: u32,
+    //max 200 0.2 SOL
+    pub limited_stage_count: u32,
+    //max time 0.4 SOL
+    pub timebound_stage_count: u32,
+    //0.6 SOL each
+    pub public_stage_count: u32,
 }

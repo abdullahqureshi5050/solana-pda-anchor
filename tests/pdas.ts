@@ -13,12 +13,13 @@ describe("pdas", () => {
 
   async function generateKeypair() {
     let keypair = anchor.web3.Keypair.generate();
-    const tx = await provider.connection.requestAirdrop(
-      keypair.publicKey,
-      0.2 * anchor.web3.LAMPORTS_PER_SOL
-    );
-    await provider.connection.confirmTransaction(tx);
-    //await new Promise( resolve => setTimeout(resolve, 3 * 1000) ); // Sleep 3s
+        //await new Promise( resolve => setTimeout(resolve, 3 * 1000) ); // Sleep 3s
+    // const tx = await provider.connection.requestAirdrop(
+    //   keypair.publicKey,
+    //   0.2 * anchor.web3.LAMPORTS_PER_SOL
+    // );
+    // await provider.connection.confirmTransaction(tx);
+
     return keypair;
   }
 
@@ -47,17 +48,58 @@ describe("pdas", () => {
       .signers([wallet])
       .rpc();
   }
-  it("An example of PDAs in action", async () => {
+
+  async function modifyLedgerAccount(
+    //color: string, 
+    pda: anchor.web3.PublicKey, 
+    wallet: anchor.web3.Keypair
+  ) {
+    await program.methods.modifyLedger()
+      .accounts({
+        ledgerAccount: pda,
+        wallet: wallet.publicKey,
+      })
+      .signers([wallet])
+      .rpc();
+  }
+
+
+//   it("PDA initializting...", async () => {
+
+//   try {
+//     const wallet = await generateKeypair(); //.then(async (wallet)=>{
+//     const pda = await derivePda(wallet.publicKey);//.then(async (pda)=>{
+//     await createLedgerAccount( pda , wallet); 
+//     console.log(`successfully created PDAs`);
+
+//     const data = await program.account.ledger.fetch(pda);
+
+//     //console.log(`Count: ${data.count} , Balance: ${data}`);
+//     console.log(`count = ${data.count}, free: ${data.freeStageCount}, limited: ${data.limitedStageCount}, public: ${data.publicStageCount}`);
+        
+//   //} 
+//   //    );
+//     //}
+//   //);  
+
+//   } catch (error) {
+//     console.log(`somthing went wrong ${error}`);
+//   }
+// })
+
+it("PDA Updating...", async () => {
 
   try {
     const wallet = await generateKeypair(); //.then(async (wallet)=>{
     const pda = await derivePda(wallet.publicKey);//.then(async (pda)=>{
-    await createLedgerAccount( pda , wallet); 
-    console.log(`successfully created PDAs`);
+    await modifyLedgerAccount( pda , wallet); 
+    console.log(`successfully Modified PDA`);
 
     const data = await program.account.ledger.fetch(pda);
 
-    console.log(`Count: ${data.count} , Balance: ${data.balance}`);
+    //console.log(`Count: ${data.count} , Balance: ${data}`);
+    console.log(`count = ${data.count}, free: ${data.freeStageCount}, limited: ${data.limitedStageCount}, public: ${data.publicStageCount}`);
+        
   //} 
   //    );
     //}
@@ -67,5 +109,4 @@ describe("pdas", () => {
     console.log(`somthing went wrong ${error}`);
   }
 })
-
 });
